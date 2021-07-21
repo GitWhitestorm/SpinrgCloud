@@ -1,0 +1,19 @@
+server:
+  port: 8001
+
+mybatis:
+# 指定POJO扫描包
+  type-aliases-package: com.whitestorm.springcloud.entities
+# mapper地址
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  config-location: classpath:mybatis/mybatis-config.xml
+
+spring:
+  application:
+    name: spring-cloud-producer-dept
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/db01?useUnicode=true&characherEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
