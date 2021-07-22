@@ -1,0 +1,28 @@
+server:
+  port: 8002
+
+mybatis:
+# 指定POJO扫描包
+  type-aliases-package: com.whitestorm.springcloud.entities
+# mapper地址
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  config-location: classpath:mybatis/mybatis-config.xml
+
+spring:
+  application:
+    name: spring-cloud-producer-dept
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/db02?useUnicode=true&characherEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+#eureka配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka/,
+#      监控信息
+info:
+  app.name: whitestorm-springcloud
+  company.name: gitwhitestorm.github.io
