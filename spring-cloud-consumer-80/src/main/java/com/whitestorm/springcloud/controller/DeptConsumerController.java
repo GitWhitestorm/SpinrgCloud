@@ -18,7 +18,9 @@ public class DeptConsumerController {
         //  提供远程访问http服务的方法
     private RestTemplate restTemplate;
 
-    private static final  String REST_URL_PREFIX = "http://localhost:8001";
+//    private static final  String REST_URL_PREFIX = "http://localhost:8001";
+
+    private static final  String REST_URL_PREFIX = "http://SPRING-CLOUD-PRODUCER-DEPT/";
     @RequestMapping("/consumer/dept/get/{id}")
     public CommonResult get(@PathVariable("id") Long id){
         return restTemplate.getForObject(REST_URL_PREFIX+"dept/get/"+id,CommonResult.class);

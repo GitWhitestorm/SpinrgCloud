@@ -12,6 +12,10 @@
     <module>spring-cloud-consumer-80</module>
     <module>spring-cloud-producer-dept-8001</module>
     <module>spring-cloud-eureka-7001</module>
+      <module>spring-cloud-eureka-7002</module>
+    <module>spring-cloud-eureka-7003</module>
+      <module>spring-cloud-producer-dept-8002</module>
+    <module>spring-cloud-producer-dept-8003</module>
   </modules>
   <packaging>pom</packaging>
 
