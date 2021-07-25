@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.whitestorm.dao.DeptDao">
-    <insert id="addDept" parameterType="com.whitestorm.spingcloud.entities.Dept">
+    <insert id="addDept" parameterType="com.whitestorm.springcloud.entities.Dept">
         insert into dept(dname, db_source) VALUES (#{dname},DATABASE())
     </insert>
-    <select id="queryById" resultType="com.whitestorm.spingcloud.entities.Dept" parameterType="Long">
+    <select id="queryById" resultType="com.whitestorm.springcloud.entities.Dept" parameterType="Long">
         select * from dept where id = #{id}
     </select>
-    <select id="queryAll" resultType="com.whitestorm.spingcloud.entities.Dept" >
+    <select id="queryAll" resultType="com.whitestorm.springcloud.entities.Dept" >
         select * from dept
     </select>
 </mapper>

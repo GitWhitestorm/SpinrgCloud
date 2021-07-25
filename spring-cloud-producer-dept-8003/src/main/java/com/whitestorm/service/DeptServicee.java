@@ -1,6 +1,6 @@
 package com.whitestorm.service;
 
-import com.whitestorm.spingcloud.entities.Dept;
+import com.whitestorm.springcloud.entities.Dept;
 
 import java.util.List;
 

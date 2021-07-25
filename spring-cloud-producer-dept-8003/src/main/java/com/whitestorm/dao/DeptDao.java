@@ -1,8 +1,7 @@
 package com.whitestorm.dao;
 
 
-import com.whitestorm.spingcloud.entities.Dept;
-import lombok.extern.log4j.Log4j;
+import com.whitestorm.springcloud.entities.Dept;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

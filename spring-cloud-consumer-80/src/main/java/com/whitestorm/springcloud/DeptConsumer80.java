@@ -16,4 +16,6 @@ public class DeptConsumer80 {
     public static void main(String[] args) {
         SpringApplication.run(DeptConsumer80.class);
     }
+
+
 }

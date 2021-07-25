@@ -1,6 +1,5 @@
-package com.whitestorm.spingcloud.entities;
+package com.whitestorm.springcloud.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;

@@ -541,8 +541,6 @@
     package com.whitestorm.dao;
     
     
-    import com.whitestorm.spingcloud.entities.Dept;
-    import lombok.extern.log4j.Log4j;
     import org.apache.ibatis.annotations.Mapper;
     import org.springframework.stereotype.Repository;
     
@@ -574,7 +572,7 @@
     package com.whitestorm.service;
     
     import com.whitestorm.dao.DeptDao;
-    import com.whitestorm.spingcloud.entities.Dept;
+    import com.whitestorm.springcloud.entities.Dept;
     import lombok.extern.log4j.Log4j;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
@@ -613,9 +611,6 @@
     
     import com.whitestorm.common.CommonResult;
     import com.whitestorm.service.DeptServiceeImpl;
-    import com.whitestorm.spingcloud.entities.Dept;
-    import lombok.extern.log4j.Log4j;
-    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.web.bind.annotation.*;
     
     import java.util.List;

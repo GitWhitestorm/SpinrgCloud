@@ -2,7 +2,7 @@ package com.whitestorm.controller;
 
 import com.whitestorm.common.CommonResult;
 import com.whitestorm.service.DeptServiceeImpl;
-import com.whitestorm.spingcloud.entities.Dept;
+import com.whitestorm.springcloud.entities.Dept;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
