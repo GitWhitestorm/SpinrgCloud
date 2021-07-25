@@ -5,7 +5,7 @@
 - 服务发现和注册——Eureka
 - API网关——Zuul
 - 断路器——Hystrix
-- 客服端负载均衡——Ribbon
+- 客服端负载均衡——Ribbon（feign）
 - 分布式配置——Spring Cloud Config
 
 ### 项目构建
@@ -541,6 +541,8 @@
     package com.whitestorm.dao;
     
     
+    import com.whitestorm.spingcloud.entities.Dept;
+    import lombok.extern.log4j.Log4j;
     import org.apache.ibatis.annotations.Mapper;
     import org.springframework.stereotype.Repository;
     
@@ -559,11 +561,7 @@
   - DeptService
 
     ```java
-    public interface DeptServicee {
-        public boolean addDept(Dept dept);
-        public Dept queryById(Long id);
-        public List<Dept> queryAll();
-    }
+    public interface DeptServicee {    public boolean addDept(Dept dept);    public Dept queryById(Long id);    public List<Dept> queryAll();}
     ```
 
   - DeptServiceImpl
@@ -572,7 +570,7 @@
     package com.whitestorm.service;
     
     import com.whitestorm.dao.DeptDao;
-    import com.whitestorm.springcloud.entities.Dept;
+    import com.whitestorm.spingcloud.entities.Dept;
     import lombok.extern.log4j.Log4j;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
@@ -611,6 +609,9 @@
     
     import com.whitestorm.common.CommonResult;
     import com.whitestorm.service.DeptServiceeImpl;
+    import com.whitestorm.spingcloud.entities.Dept;
+    import lombok.extern.log4j.Log4j;
+    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.web.bind.annotation.*;
     
     import java.util.List;
@@ -713,19 +714,7 @@
 ##### 导入依赖
 
 ```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-        <version>2.2.1.RELEASE</version>
-    </dependency>
-
-    <!--热部署-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-devtools</artifactId>
-    </dependency>
-</dependencies>
+<dependencies>    <dependency>        <groupId>org.springframework.cloud</groupId>        <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>        <version>2.2.1.RELEASE</version>    </dependency>    <!--热部署-->    <dependency>        <groupId>org.springframework.boot</groupId>        <artifactId>spring-boot-devtools</artifactId>    </dependency></dependencies>
 ```
 
 ##### 配置
@@ -777,15 +766,7 @@ public class EurakeServer_7001 {
 ##### 添加配置
 
 ```yaml
-#eureka配置
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:7001/eureka/
-#      监控信息
-info:
-  app.name: whitestorm-springcloud
-  company.name: gitwhitestorm.github.io
+#eureka配置eureka:  client:    service-url:      defaultZone: http://localhost:7001/eureka/#      监控信息info:  app.name: whitestorm-springcloud  company.name: gitwhitestorm.github.io
 ```
 
 ##### 开启主启动类注解
@@ -803,32 +784,13 @@ info:
 ##### 获取注册微服务信息
 
 ```java
-//注册进来的微服务，获取一些信息
-@GetMapping("/dept/discovery")
-public Object discovery(){
-    //获取微服务列表的清单
-    List<String> services = client.getServices();
-    for (String service : services) {
-        System.out.println(service);
-    }
-    List<ServiceInstance> instances = client.getInstances("SPRING-CLOUD-PRODUCER-DEPT");
-    for (ServiceInstance instance : instances) {
-        System.out.println(
-                instance.getHost()+"\t"+
-                        instance.getPort()+"\t"+
-                        instance.getUri()+"\t"+
-                        instance.getServiceId()
-        );
-    }
-    return this.client;
-}
+//注册进来的微服务，获取一些信息@GetMapping("/dept/discovery")public Object discovery(){    //获取微服务列表的清单    List<String> services = client.getServices();    for (String service : services) {        System.out.println(service);    }    List<ServiceInstance> instances = client.getInstances("SPRING-CLOUD-PRODUCER-DEPT");    for (ServiceInstance instance : instances) {        System.out.println(                instance.getHost()+"\t"+                        instance.getPort()+"\t"+                        instance.getUri()+"\t"+                        instance.getServiceId()        );    }    return this.client;}
 ```
 
 ##### 添加服务发现注解
 
 ```java
-//服务发现
-@EnableDiscoveryClient
+//服务发现@EnableDiscoveryClient
 ```
 
 ![image-20210722125537152](http://qwkrktldg.hn-bkt.clouddn.com/image-20210722125537152.png)
@@ -840,17 +802,7 @@ public Object discovery(){
 例：
 
 ```yaml
-server:
-  port: 7001
-
-#Eureka配置
-eureka:
-  instance:
-    hostname: eureka7001.com #eureka服务端名字
-  client:
-    register-with-eureka: false #表示是否想eureka注册中心注册自己
-    service-url:  # 监控页面
-      defaultZone: http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka
+server:  port: 7001#Eureka配置eureka:  instance:    hostname: eureka7001.com #eureka服务端名字  client:    register-with-eureka: false #表示是否想eureka注册中心注册自己    service-url:  # 监控页面      defaultZone: http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka
 ```
 
 ![image-20210722135417373](http://qwkrktldg.hn-bkt.clouddn.com/image-20210722135417373.png)
@@ -858,10 +810,7 @@ eureka:
 ##### 修改生产者配置
 
 ```yaml
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka/
+eureka:  client:    service-url:      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka/
 ```
 
 ### 负载均衡（消费者设置）
@@ -871,26 +820,13 @@ eureka:
 ##### 添加客户端依赖
 
 ```xml
-<!--        ribbon依赖        -->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-</dependency>
-<!--        eureka依赖        -->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-</dependency>
+<!--        ribbon依赖        --><dependency>    <groupId>org.springframework.cloud</groupId>    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId></dependency><!--        eureka依赖        --><dependency>    <groupId>org.springframework.cloud</groupId>    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId></dependency>
 ```
 
 ##### 添加配置
 
 ```yaml
-eureka:
-  client:
-    register-with-eureka: false # 不想eureka注册自己
-    service-url:
-      defaultZone:  http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka/
+eureka:  client:    register-with-eureka: false # 不想eureka注册自己    service-url:      defaultZone:  http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka/
 ```
 
 ##### 开启eureka注解
@@ -902,17 +838,7 @@ eureka:
 ##### 修改RestTemplate的config
 
 ```java
-@Configuration
-public class ConfigBean {
-
-//  配置负载均衡实现RestTemplate
-    @LoadBalanced // Ribbon
-    @Bean
-    public RestTemplate getRestTemplate(){
-        return new RestTemplate();
-    }
-
-}
+@Configurationpublic class ConfigBean {//  配置负载均衡实现RestTemplate    @LoadBalanced // Ribbon    @Bean    public RestTemplate getRestTemplate(){        return new RestTemplate();    }}
 ```
 
 ##### 修改访问前缀
@@ -952,4 +878,178 @@ private static final  String REST_URL_PREFIX = "http://SPRING-CLOUD-PRODUCER-DEP
 ```
 
 
+
+#### feign(消费端)（接口思想）
+
+- 集成了ribbon，自动使用ribbon的负载均衡策略
+
+##### 依赖
+
+```xml
+<!--        feign依赖         -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-feign</artifactId>
+    <version>1.4.7.RELEASE</version>
+</dependency>
+```
+
+##### 接口
+
+```java
+//value为服务名字
+@FeignClient(value = "spring-cloud-producer-dept")
+@Service
+public interface DeptClientService {
+
+    @GetMapping("/dept/get/{id}")
+    public CommonResult queryById(@PathVariable("id") Long id);
+    @GetMapping("/dept/getall/{id}")
+    public CommonResult queryAll();
+    @PostMapping("/dept/add")
+    public CommonResult addDept(@RequestBody Dept dept);
+}
+```
+
+##### 使用
+
+```java
+@RestController
+public class DeptConsumerController {
+
+        //  提供远程访问http服务的方法
+//    private RestTemplate restTemplate;
+
+//    private static final  String REST_URL_PREFIX = "http://localhost:8001";
+
+    @Resource
+    public DeptClientService service ;
+//    private static final  String REST_URL_PREFIX = "http://SPRING-CLOUD-PRODUCER-DEPT/";
+    @RequestMapping("/consumer/dept/get/{id}")
+    public CommonResult get(@PathVariable("id") Long id){
+      return service.queryById(id);
+    }
+    @RequestMapping("/consumer/dept/getall")
+    public CommonResult getall(){
+       return service.queryAll();
+    }
+    @RequestMapping("/consumer/dept/add")
+    public CommonResult getall(@RequestBody Dept dept){
+        return service.addDept(dept);
+    }
+}
+```
+
+##### 启动类
+
+```java
+@SpringBootApplication
+@EnableEurekaClient
+
+@EnableFeignClients(basePackages = {"com.whitestorm.springcloud"})
+public class DeptConsumerFeign80 {
+    public static void main(String[] args) {
+        SpringApplication.run(DeptConsumerFeign80.class);
+    }
+    
+}
+```
+
+### Hystrix
+
+- 服务熔断——服务端(服务超时或者异常)
+- 服务降级——客户端
+
+#### 服务熔断（服务端）
+
+##### 依赖
+
+```java
+<!--        hystrix依赖       -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-hystrix</artifactId>
+            <version>1.4.7.RELEASE</version>
+        </dependency>
+```
+
+##### 降级方案
+
+```java
+    @GetMapping("/dept/get/{id}")
+    @HystrixCommand(fallbackMethod = "hystrixGetDeptById")
+    public CommonResult getDeptById(@PathVariable("id") Long id){
+        Dept dept = deptServicee.queryById(id);
+        if(dept == null){
+            throw new RuntimeException("id=>"+id+",不存在改用户");
+        }
+        return new CommonResult("error",404);
+    }
+//    备选方案
+    public CommonResult hystrixGetDeptById(@PathVariable("id") Long id){
+         return new CommonResult("不出在该对象",404);
+    }
+```
+
+##### 启动类开启注解
+
+```java
+//开启服务熔断
+@EnableHystrix
+```
+
+#### 服务降级（客户端）（需支持feign）
+
+##### 写降级方法
+
+```java
+@Component
+public class DeptClientServiceFallBackMethods implements FallbackFactory {
+    @Override
+    public DeptClientService create(Throwable throwable) {
+        return new DeptClientService() {
+            @Override
+            public CommonResult queryById(Long id) {
+                return new CommonResult("no id",404);
+            }
+
+            @Override
+            public CommonResult queryAll() {
+                return new CommonResult("出错",404);
+            }
+
+            @Override
+            public CommonResult addDept(Dept dept) {
+                return null;
+            }
+        };
+    }
+}
+
+```
+
+##### 对Service注解
+
+```java
+@FeignClient(value = "spring-cloud-producer-dept",fallbackFactory = DeptClientServiceFallBackMethods.class)
+@Service
+public interface DeptClientService {
+
+    @GetMapping("/dept/get/{id}")
+    public CommonResult queryById(@PathVariable("id") Long id);
+    @GetMapping("/dept/getall/{id}")
+    public CommonResult queryAll();
+    @PostMapping("/dept/add")
+    public CommonResult addDept(@RequestBody Dept dept);
+}
+```
+
+##### 修改配置文件
+
+```yaml
+# 开启降级
+feign:
+  hystrix:
+    enabled: true
+```
 
